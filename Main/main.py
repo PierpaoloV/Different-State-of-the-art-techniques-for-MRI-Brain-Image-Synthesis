@@ -1,9 +1,8 @@
 import os
 import torch
 import niclib as nl
-from synthunet.Functions.test import evaluate_model
+import Functions.test as test
 import Functions.options as opt
-import synthunet.Functions.models  as mod
 import torch.nn as nn
 import Functions.preprocessing as prep
 
@@ -12,7 +11,6 @@ data_path,checkpoints_path, results_path, metrics_path, log_path, mainfolder = p
 case_path = [f.path for f in os.scandir(data_path) if f.is_dir()]
 modeltype,model,num_params, G_optimizer_parameters = opt.build_Generator()
 folds = [0,1,2,3]
-# folds = [0]
 for k in folds:
     print('Getting the fold {}'.format(k))
     case_paths,test_case_paths =prep.get_datax(case_path.copy(),k)
@@ -52,7 +50,7 @@ for k in folds:
     trainer.train(model, train_gen, val_gen)
     model_version = checkpoints_path + fullname
     image_version = results_path + name
-    synth_metrics = evaluate_model( test_case_paths, model_version,image_version,metrics_path, k,
+    synth_metrics = test.evaluate_model( test_case_paths, model_version,image_version,metrics_path, k,
                                     save_img=True )
 
     print( 'Process done! Check the results!' )
